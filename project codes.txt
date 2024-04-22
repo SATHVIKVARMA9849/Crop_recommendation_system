@@ -1,0 +1,2793 @@
+app.py:
+
+from flask import Flask, render_template, request, jsonify
+import joblib
+
+import pickle
+
+app = Flask(__name__)
+
+# Load the Random Forest model
+#model = joblib.load('C:\Users\satvik Varma\Downloads\MAJOR_PROJECT_2\model_NaiveBayes.pkl')
+model = pickle.load(open('model_NaiveBayes.pkl', 'rb'))
+
+# Define a route to render the HTML form
+@app.route('/')
+def home():
+    return render_template('homepage_final.html')
+
+# Define a route to handle form submission and make a prediction
+@app.route('/predict', methods=['POST'])
+def predict():
+    # Get the input data from the form
+    param1 = float(request.form['param1'])
+    param2 = float(request.form['param2'])
+    param3 = float(request.form['param3'])
+    param4 = float(request.form['param4'])
+    param5 = float(request.form['param5'])
+    param6 = float(request.form['param6'])
+    param7 = float(request.form['param7'])
+    
+
+    # Make a prediction using the loaded model
+    prediction = model.predict([[param1, param2, param3, param4, param5, param6, param7]])
+
+    # Return the prediction as JSON
+    # return jsonify({'prediction': prediction.tolist()[0]})
+    crop_description = get_crop_description(prediction[0])  # Function to get crop description
+    return render_template('resultpage_final.html', prediction=prediction[0], crop_description=crop_description)
+
+def get_crop_description(prediction):
+    crop_descriptions = {
+        "rice": "nothing",
+        "maize": "Description of Your Prediction Crop",
+        "chickpea": "Description of Your Prediction Crop",
+        "kidneybeans": "Description of Your Prediction Crop",
+        "pigeonpeas": "Description of Your Prediction Crop",
+        "mothbeans": "nothing",
+        "mungbean": "Description of Your Prediction Crop",
+        "blackgram": "Description of Your Prediction Crop",
+        "lentil": "Description of Your Prediction Crop",
+        "pomegranate": "Description of Your Prediction Crop",
+        "banana": "Description of Your Prediction Crop",
+        "mango": "Description of Your Prediction Crop",
+        "grapes": "Description of Your Prediction Crop",
+        "watermelon": "Description of Your Prediction Crop",
+        "muskmelon": "Description of Your Prediction Crop",
+        "apple": "Description of Your Prediction Crop",
+        "orange": "Description of Your Prediction Crop",
+        "papaya": "Description of Your Prediction Crop",
+        "coconut": "Description of Your Prediction Crop",
+        "cotton": "Description of Your Prediction Crop",
+        "jute": "Description of Your Prediction Crop",
+        "coffee": "Description of Your Prediction Crop",
+        # Add more descriptions for other crops as needed
+    }
+    return crop_descriptions.get(prediction, "No description available")
+
+
+# Add a route to handle the fertilizer suggestion page
+@app.route('/fertilizer_suggestion_page')
+def fertilizer_suggestion():
+    return render_template('fertilizersuggestion_page.html')
+    
+# Add a route to handle the result page
+@app.route('/result_page')
+def result_page():
+    return render_template('resultpage_final.html', prediction="Your Prediction")
+
+if __name__ == '__main__':
+    app.run(debug=True,port=8001)
+
+
+css:
+
+/*--------------------------------------------------------------------- 
+File Name: style.css 
+---------------------------------------------------------------------*/
+
+
+/*--------------------------------------------------------------------- 
+import Fonts -
+--------------------------------------------------------------------*/
+
+@import url('https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i');
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800,900&display=swap');
+
+/*****---------------------------------------- 1) 
+ 2) font-family: 'Poppins', sans-serif;
+ ----------------------------------------*****/
+
+
+/*--------------------------------------------------------------------- 
+import Files 
+---------------------------------------------------------------------*/
+
+@import url(normalize.css);
+@import url(icomoon.css);
+@import url(font-awesome.min.css);
+@import url(nice-select.css);
+
+/*--------------------------------------------------------------------- 
+basic 
+---------------------------------------------------------------------*/
+
+* {
+    box-sizing: border-box !important;
+}
+
+.container {
+    max-width: 1170px;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+body {
+    color: #666666;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.80857;
+    font-weight: normal;
+    overflow-x: hidden;
+}
+
+a {
+    color: #1f1f1f;
+    text-decoration: none !important;
+    outline: none !important;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -ms-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    letter-spacing: 0;
+    font-weight: normal;
+    position: relative;
+    padding: 0;
+    font-weight: normal;
+    line-height: normal;
+    color: #111111;
+    margin: 0
+}
+
+h1 {
+    font-size: 24px;
+}
+
+h2 {
+    font-size: 22px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+h4 {
+    font-size: 16px
+}
+
+h5 {
+    font-size: 14px
+}
+
+h6 {
+    font-size: 13px
+}
+
+*,
+*::after,
+*::before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+h1 a,
+h2 a,
+h3 a,
+h4 a,
+h5 a,
+h6 a {
+    color: #212121;
+    text-decoration: none!important;
+    opacity: 1
+}
+
+button:focus {
+    outline: none;
+}
+
+ul,
+li,
+ol {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+
+p {
+    margin: 0px;
+    font-weight: normal;
+    font-size: 17px;
+    line-height: 28px;
+    color: #2d2d2d;
+}
+
+a {
+    color: #222222;
+    text-decoration: none;
+    outline: none !important;
+}
+
+a,
+.btn {
+    text-decoration: none !important;
+    outline: none !important;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -ms-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+ :focus {
+    outline: 0;
+}
+
+.btn-custom {
+    margin-top: 20px;
+    background-color: transparent !important;
+    border: 2px solid #ddd;
+    padding: 12px 40px;
+    font-size: 16px;
+}
+
+.lead {
+    font-size: 18px;
+    line-height: 30px;
+    color: #767676;
+    margin: 0;
+    padding: 0;
+}
+
+.form-control:focus {
+    border-color: #ffffff !important;
+    box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .25);
+}
+
+.navbar-form input {
+    border: none !important;
+}
+
+.badge {
+    font-weight: 500;
+}
+
+blockquote {
+    margin: 20px 0 20px;
+    padding: 30px;
+}
+
+button {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.full {
+    float: left;
+    width: 100%;
+}
+
+.full {
+    width: 100%;
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+.titlepage {
+    padding-bottom: 50px;
+}
+.titlepage span  {
+    font-size: 24px;
+    color: #6b7908;
+    line-height: 30px;
+    font-weight: bold;
+    padding-bottom: 15px;
+    display:block;
+    text-transform: uppercase;
+}
+.titlepage h2 {
+    font-size: 50px;
+    color: #999998;
+    line-height: 50px;
+    font-weight: bold;
+    display: block;
+    text-transform: uppercase;
+}
+
+.titlepage p {
+    padding-top: 0px;
+}
+
+.d_flex {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.read_more {
+    font-size: 16px;
+    background: #323232;
+    max-width: 203px;
+    width: 100%;
+    transition: ease-in all 0.5s;
+    color: #fff;
+    display: block;
+    height: 80px;
+    line-height: 80px;
+    text-align: center;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.read_more:hover {
+    background: #6b7908;
+    color: #fff;
+}
+
+.text_align_left {
+    text-align: left;
+}
+
+.text_align_right {
+    text-align: right;
+}
+
+.text_align_center {
+    text-align: center;
+}
+
+.img_responsive {
+    max-width: 100%;
+}
+
+
+/**-- heading section --**/
+
+
+/*---------------------------- preloader area ----------------------------*/
+
+.loader_bg {
+    position: fixed;
+    z-index: 9999999;
+    background: #fff;
+    width: 100%;
+    height: 100%;
+}
+
+.loader {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader img {
+    width: 280px;
+}
+
+
+/*-- header --*/
+
+.header-area {
+    border-top: #6b7908 solid 15px;
+    width: 100%;
+    position: absolute;
+    z-index: 9999;
+    height: 85px;
+    background: transparent;
+    line-height: 68px;
+}
+
+.logo a {
+    color: #1c1c1b;
+    font-size: 24px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.logo a span {
+    color: #6b7908;  
+}
+
+.navbar-area {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.site-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-navbar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+}
+
+.site-navbar ul li a {
+    color: #1c1c1b;
+    font-size: 17px;
+    display: block;
+    text-decoration: none;
+}
+
+.site-navbar ul li {
+    padding-right: 55px;
+}
+
+.site-navbar ul li:last-child {
+    padding-right: 0;
+}
+
+.site-navbar ul li a:hover {
+    color: #6b7908;
+}
+.site-navbar ul li a.active {
+    color: #6b7908;
+}
+
+/* navbar regular css end */
+
+
+/* nav-toggler css start */
+
+.nav-toggler {
+    border: 3px solid #363636;
+    padding: 5px;
+    background-color: transparent;
+    cursor: pointer;
+    height: 39px;
+    display: none;
+    z-index: 99999;
+}
+
+.nav-toggler span,
+.nav-toggler span:before,
+.nav-toggler span:after {
+    width: 28px;
+    height: 3px;
+    background-color: #363636;
+    display: block;
+    transition: .3s;
+}
+
+.nav-toggler span:before {
+    content: '';
+    transform: translateY(-9px);
+}
+
+.nav-toggler span:after {
+    content: '';
+    transform: translateY(6px);
+}
+
+.nav-toggler.toggler-open span {
+    background-color: transparent;
+}
+
+.nav-toggler.toggler-open span:before {
+    transform: translateY(0px) rotate(45deg);
+}
+
+.nav-toggler.toggler-open span:after {
+    transform: translateY(-3px) rotate(-45deg);
+}
+
+
+/* nav-toggler css start */
+
+
+/* intro-area css start */
+
+.intro-area {
+    height: calc(100vh - 61px);
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+}
+
+
+
+ul.email li {
+     display: inline-block;
+     padding-right: 30px;
+}
+ul.email li:last-child {padding-right: 0;}
+ul.email li a {
+     color: #6b7908;
+     font-size: 17px;
+     text-transform: uppercase;
+}
+
+ul.email li i {
+     color: #1a1b1b;
+     font-size: 19px;
+     ;
+     padding-left: 10px;
+}
+
+/** end header **/
+
+
+/** banner section **/
+
+
+.relative {
+     left: 5%;
+     right: 5%;
+     text-align: left;
+}
+
+.carousel-item {
+     height: 100%;
+     width: 100%;
+}
+#banner1 .carousel-item img {
+    width: 100%; 
+    height: 100vh;
+}
+.willom {
+    display: flex;
+    margin-top: -85px;
+}
+.willom h1 {
+    font-size: 70px;
+    line-height: 70px;
+    color: #fff;
+    font-weight: bold;
+    margin: 0 auto;
+    text-align: center;
+    background: #6b7908;
+    display: inline-block;
+    padding: 46px 46px;
+    border-radius: 30px;
+}
+.slider_main .carousel-indicators {
+     display: none;
+}
+
+#banner1 .carousel-control-prev,
+#banner1 .carousel-control-next {
+     width: 103px;
+     height: 103px;
+     background-color: #ffffffc4;
+     color: #000000;
+     font-size: 60px;
+     opacity: 1;
+     top: 50%;
+    
+     z-index: 999;
+     border-radius: 10px;
+}
+
+#banner1 .carousel-control-prev {
+     left: 3%;
+}
+
+#banner1 .carousel-control-next {
+     right: 3%;
+}
+
+#banner1 .carousel-control-next:focus,
+#banner1 .carousel-control-next:hover,
+#banner1 .carousel-control-prev:focus,
+#banner1 .carousel-control-prev:hover {
+     color: #6b7908;
+}
+
+
+
+/** end banner section **/
+/** recommendation box**/
+
+/* Style for the translucent box */
+.translucent-box {
+    position: absolute;
+    top: calc(50% + 40px); /* Adjusted top position */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; /* Ensure the box is above the image */
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 40px; /* Increased padding */
+    width: 650px; /* Adjusted width */
+    max-height: calc(100vh - 140px); /* Adjusted max-height */
+    overflow-y: auto; /* Add scroll if content exceeds max-height */
+    border: 2px solid #9a7b4f; /* Set border color to match inner input boxes */
+  }
+  
+  /* Style for the heading */
+  .translucent-box h1 {
+    text-align: center;
+    color: #333; /* Light color */
+  }
+  
+  /* Style for the input fields */
+  .translucent-box input[type="number"] {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 2px solid #9a7b4f; /* Green outline */
+    border-radius: 10px;
+    font-size: 16px;
+  }
+  
+  /* Style for the submit button */
+  .translucent-box .btn-submit {
+    background-color: #795c34; /* Green color */
+    color: white;
+    border: none;
+    padding: 15px 30px; /* Adjusted padding */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 18px; /* Adjusted font size */
+    display: block; /* Ensure the button takes full width */
+    margin: 0 auto; /* Center the button */
+  }
+  
+  /* Style for the parameter boxes */
+  .translucent-box div {
+    margin-bottom: 15px; /* Adjusted margin */
+    border: 2px solid #9a7b4f; /* Green outline */
+    padding: 10px; /* Adjusted padding */
+    border-radius: 5px;
+  }
+
+  /* Style for the heading box */
+    .heading-box {
+    background-color: #795c34; /* Grey background color */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px; /* Add some space below the heading box */
+}
+
+    .heading-text {
+    font-size: 30px; /* Adjust the font size as needed */
+    color: white !important; /* White text color */
+    font-style: times new roman;
+
+}
+/* Style for the parameter labels */
+    label {
+    font-size: 17px;
+    display: block;
+    margin-bottom: 10px;
+    color: #333; /* Darker color for the parameter names */
+    font-style: times new roman;
+}
+
+/** end recommendation box**/
+
+/**  result box**/
+
+/* Styles for the translucent box */
+.translucent-box {
+    position: absolute; /* Change to fixed positioning */
+    top: calc(50% + 40px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999; /* Set a higher z-index to ensure it's on top */
+    background-color: rgba(255, 255, 255, 0.8); 
+    padding: 40px; 
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 600px; 
+    margin: auto; 
+    max-height: calc(100vh - 140px);
+    border-radius: 20px; 
+    border: 2px solid #9a7b4f;
+}
+
+/* Styles for the heading box */
+.heading-box {
+    background-color: #795c34; 
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px; 
+}
+
+/* Styles for the heading text */
+.heading-text {
+    font-size: 50px; 
+    color: white !important; 
+    font-style: times; /* Change font family */
+}
+
+.heading-text2 {
+    font-size: 30px; 
+    color: white !important; 
+    font-style: times; /* Change font family */
+}
+.prediction p {
+    font-size: 22px; /* Adjust the font size as needed */
+}
+
+/* Styles for the parameter labels */
+label {
+    font-size: 17px;
+    display: block;
+    margin-bottom: 10px;
+    color: #333; 
+    font-family: "Times New Roman", sans-serif; /* Change font family */
+}
+
+/* Styles for the submit button */
+.translucent-box .description-box {
+    background-color: #795c34; 
+    color: white;
+    border: none;
+    padding: 15px 30px; 
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 18px; 
+    display: block; 
+    margin: 0 auto; 
+}
+
+/* Adjust background image z-index */
+.full_bg {
+    position: relative;
+    z-index: -2; /* Set a lower z-index to keep the photo behind the translucent box */
+}
+
+
+
+/** end result box**/
+
+
+
+/** about section **/
+
+.about {
+    background: #fff;
+    padding-top: 90px;
+}
+
+
+.about_img figure {
+    margin: 0;
+}
+
+
+.about_img figure img {
+    transition: ease-in all 0.5s; 
+    border-radius: 5px;
+}
+
+.about .titlepage {
+    padding-bottom: 0;
+    max-width: 610px;
+    width: 100%;
+    float: right;
+}
+
+.about .titlepage p {
+    padding-top: 20px;
+    color: #999998;
+}
+
+.about .read_more {
+    margin-top: 35px;
+}
+
+.about_img figure img:hover {
+    box-shadow: 0 0 16px 3px #635d5d38;
+    transition: ease-in all 0.5s;
+}
+
+
+/** end about section **/
+
+
+/** services section **/
+
+.services {
+    background: #fff;
+    padding-top: 90px;
+}
+
+.services .titlepage {
+    padding-bottom: 20px;
+}
+
+.services_box {
+    margin-top: 30px;
+    box-shadow: 0 0 38px rgba(2, 3, 8, 0.14);
+    background:#fff;
+    margin-bottom: 50px;
+    border-radius: 5px;
+}
+
+.services_box figure {
+    margin: 0;
+}
+
+.services_box figure img {
+    border-radius: 5px 5px 0 0;
+}
+
+.veget {
+    padding: 40px;
+    border-radius: 5px 5px 0 0;
+    margin-top: -5px;
+    position: relative;
+    z-index: 99999;
+    background: #fff;
+}
+
+.services_box h3 {
+    color: #292928;
+    font-size: 30px;
+    line-height: 35px;
+    font-weight: bold;
+       padding-bottom: 20px;
+}
+
+.services_box_main .read_more {
+    margin: 0 auto; 
+    display: block;
+}
+
+/** end services section **/
+
+
+
+/** customers **/
+
+.customers {
+    background: #fff;
+    padding-top: 90px;
+    padding-bottom: 90px;
+}
+.customers .titlepage {padding-bottom: 15px;}
+.clients_banner .relative {
+    position: inherit;
+    bottom: 0;
+    padding: 0;
+}
+.custom { text-align: left;  }
+.custom {
+    box-shadow: 0 0 38px rgba(2, 3, 8, 0.15);
+    margin: 36px 0;
+    padding: 40px;
+}
+.custom i img {
+    border-radius: 50%;
+    border: #6b7908e3 solid 10px;
+}
+.clint {
+    text-align: left;
+    padding-left: 20px;
+}
+.clint h4 {
+    color: #6b7908;
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: bold;
+}
+
+.clint span {
+    display: block;
+    line-height: 20px;
+    font-size: 16px;
+    color: #303030;
+}
+
+.custom p {
+   
+    line-height: 30px;
+    padding: 30px 0px;
+    
+}
+
+#myCarousel .carousel-indicators {
+    display: none;
+}
+
+#myCarousel .carousel-control-prev,
+#myCarousel .carousel-control-next {
+    width: 76px;
+    height: 76px;
+    color: #000;
+    font-size: 40px;
+    opacity: 1;
+    top: 49%;
+    z-index: 999;
+}
+
+#myCarousel .carousel-control-prev {
+    left: 4%;
+}
+
+#myCarousel .carousel-control-next {
+    right: 4%;
+}
+
+#myCarousel .carousel-control-next:focus,
+#myCarousel .carousel-control-next:hover,
+#myCarousel .carousel-control-prev:focus,
+#myCarousel .carousel-control-prev:hover {
+    color: #000;
+}
+
+
+/** end customers **/
+
+/** choose section **/
+
+
+.choose {
+    background: url(../images/chose.jpg);
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    padding: 90px 0 60px 0;
+}
+
+.choose .titlepage h2 {
+    color: #fff;
+}
+.point {margin-bottom: 30px;}
+.point h3 {
+    max-width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: #fff;
+    border: #cfd8b7 solid 18px;
+    font-size: 37px;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #6b7908;
+}
+
+.point span {
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    line-height: 22px;
+    padding-top: 28px;
+    display: block;
+}
+
+
+/** end choose section **/
+
+
+/** news section **/
+
+.news {
+    background: #fff;
+    padding-top: 90px;
+}
+
+.news .titlepage {padding-bottom: 20px;}
+
+
+.latest {
+    background: #fff;
+    margin-top: 30px;
+}
+.box_desho {box-shadow: 0 0 38px rgba(2, 3, 8, 0.15);}
+
+.latest figure {
+    margin: 0;
+}
+
+.latest span {
+    background: #6b7908;
+    width: 79px;
+    height: 68px;
+    margin: 0 auto;
+    z-index: 999999;
+    line-height: 15px;
+    color: #fff;
+    top: 30px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    text-transform: uppercase;
+    text-align: left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.nostrud {
+    padding: 20px 15px 0px 15px;
+}
+.nostrud p {
+    padding-top: 10px;
+}
+
+.nostrud h3 {
+    color: #333333;
+    font-size: 20px;
+    line-height: 30px;
+    font-weight: bold;
+}
+
+
+
+.nostrud .read_more {
+    display: inline;
+    background: transparent;
+    color: #6b7908;
+    text-align: left;
+}
+
+.nostrud .read_more:hover {
+    color:#323232;
+}
+
+
+/** end news section **/
+
+
+/** contact  **/
+
+.contact {
+    background: #fff;
+    padding-top: 90px;
+}
+
+.map-responsive {margin-top: 90px;}
+.main_form .form_control {
+    padding: 0 20px;
+    margin-bottom: 30px;
+    width: 100%;
+    height: 66px;
+    background: #fff;
+    color: #999998;
+    font-size: 18px;
+    font-weight: normal;
+    border: #6b7908 solid 3px;
+}
+
+.main_form .textarea {
+    margin-bottom: 40px;
+    width: 100%;
+    background: #fff;
+    color: #999998 !important;
+    font-size: 18px;
+    font-weight: normal;
+    padding: 15px 20px 15px 20px;
+    border: #6b7908 solid 3px;
+    height: 179px;
+}
+
+
+.group_btn {display: flex; justify-content: center;}
+
+.main_form .send_btn {
+    font-size: 20px;
+    transition: ease-in all 0.5s;
+    background-color: #323232;
+    text-transform: uppercase;
+    color: #fff;
+    max-width: 169px;
+    width: 100%;
+    display: block;
+    font-weight: 500;
+    height: 69px;
+    line-height: 69px;
+    margin: 0 5px;
+    border-radius: 10px;
+}
+
+.main_form .send_btn:hover {
+    background-color: #6b7908;
+    transition: ease-in all 0.5s;
+    color: #fff;
+}
+
+#request *::placeholder {
+    color: #d0d0cf;
+    opacity: 1;
+}
+
+.datepicker-days {
+    padding: 20px;
+}
+
+
+/** end contact  **/
+
+
+
+
+/** footer **/
+
+.footer {
+    padding-top: 70px;
+    background: #252525;
+    text-align: center;
+}
+
+
+.hedingh3  {padding-top: 20px;}
+.hedingh3 h3 {
+    color: #fff;
+    font-size: 24px;
+    padding-bottom: 20px;
+    line-height: 23px;
+    font-weight: 500;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.hedingh3 p {
+    color: #fff;
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+ul.menu_footer {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+ul.menu_footer li a {
+    color: #fff;
+    font-size: 17px;
+    line-height: 18px;
+    padding-bottom: 10px;
+    display: block;
+}
+
+ul.menu_footer li a:hover {
+    color: #6b7908;
+}
+
+.newsl {
+    width: 100%;
+    height: 51px;
+    background: #fff;
+    color: #c9c7c7;
+    font-size: 17px;
+    font-weight: normal;
+    box-shadow: inherit;
+    padding: 0 15px;
+    border: #fff solid 2px;
+    margin-bottom: 20px;
+   
+}
+
+.subsci_btn {
+    font-size: 16px;
+    transition: ease-in all 0.5s;
+    background-color: #6b7908;
+    text-transform: uppercase;
+    color: #fff;
+    display: block;
+    font-weight: normal;
+    line-height: 59px;
+    height: 59px;
+    max-width: 70px;
+    width: 100%;
+    display: block;
+    border:inherit;
+    border-radius:0px;
+}
+
+.subsci_btn:hover {
+    transition: ease-in all 0.5s;
+    box-shadow: 0 0 10px 0px #dddddd5e;
+}
+
+#colof *::placeholder {
+    color: #c9c7c7;
+    opacity: 1;
+}
+
+ul.recent li {
+    display: flex;
+    color: #fff;
+    font-size: 15px;
+    line-height: 20px;
+    margin-bottom: 20px;
+}
+
+ul.recent li img {
+    width: 61px;
+    height: 46px;
+    margin-right: 13px;
+}
+
+.flot_right {float: right;}
+
+
+ul.top_infomation li {
+    padding-bottom: 8px;
+    display: block;
+    font-size: 16px;
+    color: #fff;
+}
+
+ul.top_infomation li i {
+    margin-right: 5px;
+    color: #fff;
+    text-align: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    background: #6b7908;
+    line-height: 30px;
+    font-size: 15px;
+}
+
+ul.top_infomation li a {
+    color: #fff;
+}
+
+ul.top_infomation li a:hover {
+    color: #6b7908;
+}
+
+.copyright {
+    margin-top: 70px;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    background: #6b7908;
+}
+ul.social_icon {text-align: right;}
+ul.social_icon li {
+    display: inline-block;
+    margin-left: 40px;
+}
+
+ul.social_icon li a i {
+    font-size: 17px;
+    color: #fff;
+    transition: ease-in all 0.5s;
+    line-height: 30px;
+    border-radius: 50px;
+    text-align: center;
+}
+
+ul.social_icon li a i:hover {
+    color: #111111;
+    transition: ease-in all 0.5s;
+
+}
+
+.copyright p {
+    color: #fff;
+    font-size: 17px;
+    line-height: 22px;
+    text-align: left;
+    font-weight: normal;
+}
+
+.copyright a {
+    color: #fff;
+}
+
+.copyright a:hover {
+    color: #111111;
+}
+
+
+/** end footer **/
+
+
+/**  inner page css **/
+
+.inner_page .header-area {
+    background: #dddddd7a;
+    position: inherit;
+}
+.testimonail_page .footer {
+    margin-top: 0;
+}
+
+.about_page .about, .service_page .services, .blog_page .news {padding-bottom: 90px;} 
+
+homepage_final:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CROP RECOMMENDATION SYSTEM</title>
+  <style>
+    body {
+      background: url('https://as2.ftcdn.net/v2/jpg/02/22/77/27/1000_F_222772750_glVTOdMreEwA0ghLAl2rMf1cerRXmlmI.jpg') center center/cover;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Navigation bar styles */
+    .navbar {
+      background-color: brown;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 20px; /* Rounded box */
+    }
+
+    .navbar a:hover {
+      background-color: #ddd;
+      color: white;
+    }
+
+    /* Logo styles */
+     .logo {
+      display: flex;
+      align-items: center;
+    } 
+    
+
+    .logo img {
+      height: 80px;
+      width: 80px;
+      margin-right: 20px;
+    }
+
+    .logo h2 {
+      color: white;
+      font-family: "Times new roman", sans-serif;
+      font-size: 20px
+    }
+
+    .logo2 img {
+	height:80px;
+	width: 350px;
+	margin-right: 20px;
+    }
+    
+     /* Hamburger menu icon styles */
+    .hamburger-menu {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .hamburger-menu .line {
+      width: 25px;
+      height: 3px;
+      background-color: white;
+      margin: 4px 0;
+    }
+
+    /* Container styles */
+    .container {
+      max-width: 600px;
+      margin: 20px auto; /* Adjusted margin */
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="number"] {
+      width: calc(100% - 22px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 2px solid #17a2b8;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .btn-submit {
+      background-color: #17a2b8;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 16px;
+    }
+
+    .btn-submit:hover {
+      background-color: #138496;
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+<!-- Navigation bar -->
+<div class="navbar">
+  <div class="logo">
+    <div class="hamburger-menu">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+    <img src="C:\Users\satvik Varma\Downloads\MAJOR_PROJECT_2\PICTURES\Project_logo.png" alt=" ">
+    <h2>FARM-EASY</h2>
+  </div>
+
+  <div class="logo2">
+  <img src="C:\Users\satvik Varma\Downloads\MAJOR_PROJECT_2\PICTURES\Project_navbar.png" alt=" FARM-EASYYYY ">
+  </div>
+
+  <div class="nav-links">
+    <a href="#" style="background-color: rgba(255, 255, 255, 0.2);">Home</a>
+    <a href="#" style="background-color: rgba(255, 255, 255, 0.2);">Contact Us</a>
+  </div>
+</div>
+
+<div class="container">
+  <h1>Smart Crop Advisor Using Various Machine Learning</h1>
+
+  <form action="/predict" method="POST">
+    <div>
+      <label for="param1">Nitrogen:</label>
+      <input type="number" name="param1" required>
+    </div>
+
+    <div>
+      <label for="param2">Phosphorous:</label>
+      <input type="number" name="param2" required>
+    </div>
+
+    <div>
+      <label for="param3">Potassium:</label>
+      <input type="number" name="param3" required>
+    </div>
+
+    <div>
+      <label for="param4">Temperature:</label>
+      <input type="number" name="param4" required>
+    </div>
+
+    <div>
+      <label for="param5">Humidity:</label>
+      <input type="number" name="param5" required>
+    </div>
+
+    <div>
+      <label for="param6">pH:</label>
+      <input type="number" name="param6" required>
+    </div>
+
+    <div>
+      <label for="param7">Rainfall:</label>
+      <input type="number" name="param7" required>
+    </div>
+    
+    <button type="submit" class="btn-submit">Submit</button>
+  </form>
+</div>
+
+</body>
+</html>
+
+resultpage_final:
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction Result</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+    body {
+      background: url('https://as1.ftcdn.net/v2/jpg/02/11/46/78/1000_F_211467868_wZwTRAmk8G2AiTiwJ2mlKZ0GOqcD0VHm.jpg') center center/cover;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; /* Full viewport height */
+    }
+
+    /* Navigation bar styles */
+    .navbar {
+      background-color: brown;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 999; /* Ensure header is on top */
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 20px; /* Rounded box */
+    }
+
+    .navbar a:hover {
+      background-color: #ddd;
+      color: white;
+    }
+
+    /* Logo styles */
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 80px;
+      width: 80px;
+      margin-right: 20px;
+    }
+
+    .logo h2 {
+      color: white;
+      font-family: "Times new roman", sans-serif;
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .logo2 img {
+	    height: 80px;
+	    width: 350px;
+	    margin-right: 20px;
+    }
+    
+     /* Hamburger menu icon styles */
+    .hamburger-menu {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .hamburger-menu .line {
+      width: 25px;
+      height: 3px;
+      background-color: white;
+      margin: 4px 0;
+    }
+        .result-container {
+            text-align: center;
+            /*background-color: #4BC54C; Light green color */
+            background-color: rgba(75, 197, 76, 0.7); /* Light green color with opacity */
+            padding: 30px;
+            border: 10px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.8);
+            max-width: 600px;
+            margin: auto; /* Center horizontally */
+            margin-top: auto; /* Center vertically */
+            border-radius: 20px; /* Rounded corners for result container */
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .prediction {
+            font-size: 24px;
+            margin-top: 20px;
+      	    color: white;
+        }
+        .fertilizer-button {
+            background-color: #ffc107; /* Yellow color */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .fertilizer-button:hover {
+            background-color: #ffca28; /* Darker yellow color on hover */
+        }
+    </style>
+</head>
+<body>
+   <!-- Navigation bar -->
+<div class="navbar">
+  <div class="logo">
+    <div class="hamburger-menu">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+    <img src="C:\Users\satvik Varma\Downloads\MAJOR_PROJECT_2\PICTURES\Project_logo.png"  alt=" ">
+    <h2>FARM-EASY</h2>
+  </div>
+
+  <div class="logo2">
+  <img src="C:\Users\satvik Varma\Downloads\MAJOR_PROJECT_2\PICTURES\Project_navbar.png" alt=" ">
+  </div>
+
+  <div class="nav-links">
+    <a href="#" style="background-color: rgba(255, 255, 255, 0.2);">Home</a>
+    <a href="#" style="background-color: rgba(255, 255, 255, 0.2);">Contact Us</a>
+  </div>
+</div>
+    <div class="result-container">
+        <h1>Prediction Result</h1>
+        <div class="prediction">
+            <p>Best crop to grow is : <span id="Prediction Result">{{ prediction }}</span></p>
+            <p>Description: <span id="Description">{{ crop_description }}</span></p>
+        </div>
+        <a href="/fertilizer_suggestion_page" class="fertilizer-button">Get Fertilizer Suggestion</a>
+</body>
+</html>
+
+
+fertilizersuggestion_page:
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fertilizer Suggestion</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+    body {
+      background: url('https://as1.ftcdn.net/v2/jpg/02/11/46/78/1000_F_211467868_wZwTRAmk8G2AiTiwJ2mlKZ0GOqcD0VHm.jpg') center center/cover;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; /* Full viewport height */
+    }
+
+    /* Navigation bar styles */
+    .navbar {
+      background-color: brown;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      z-index: 999; /* Ensure header is on top */
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      padding: 14px 20px;
+      border-radius: 20px; /* Rounded box */
+    }
+
+    .navbar a:hover {
+      background-color: #ddd;
+      color: white;
+    }
+
+    /* Logo styles */
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 80px;
+      width: 80px;
+      margin-right: 20px;
+    }
+
+    .logo h2 {
+      color: white;
+      font-family: "Times new roman", sans-serif;
+      font-size: 20px;
+      margin: 0;
+    }
+
+    .logo2 img {
+	    height: 80px;
+	    width: 350px;
+	    margin-right: 20px;
+    }
+    
+     /* Hamburger menu icon styles */
+    .hamburger-menu {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .hamburger-menu .line {
+      width: 25px;
+      height: 3px;
+      background-color: white;
+      margin: 4px 0;
+    }
+        .result-container {
+            text-align: center;
+            /*background-color: #4BC54C; Light green color */
+            background-color: rgba(75, 197, 76, 0.7); /* Light green color with opacity */
+            padding: 30px;
+            border: 10px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.8);
+            max-width: 600px;
+            margin: auto; /* Center horizontally */
+            margin-top: auto; /* Center vertically */
+            border-radius: 20px; /* Rounded corners for result container */
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .prediction {
+            font-size: 24px;
+            margin-top: 20px;
+      	    color: white;
+        }
+        .fertilizer-button {
+            background-color: #ffc107; /* Yellow color */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .fertilizer-button:hover {
+            background-color: #ffca28; /* Darker yellow color on hover */
+        }
+    </style>
+</head>
+<body>
+   <!-- Navigation bar -->
+<div class="navbar">
+  <div class="logo">
+    <div class="hamburger-menu">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+    <img src="C:\Users\satvik Varma\Downloads\MAJOR_PROJECT_2\PICTURES\Project_logo.png"  alt=" ">
+    <h2>FARM-EASY</h2>
+  </div>
+
+  <div class="logo2">
+  <img src="C:\Users\satvik Varma\Downloads\MAJOR_PROJECT_2\PICTURES\Project_navbar.png" alt=" ">
+  </div>
+
+  <div class="nav-links">
+    <a href="/result_page" method="POST" style="background-color: rgba(255, 255, 255, 0.2);">Home</a>
+    <a href="/result_page" method="POST" style="background-color: rgba(255, 255, 255, 0.2);">Contact Us</a>
+  </div>
+</div>
+    <div class="result-container">
+        <h1>Fertilizer Suggestion</h1>
+        <p>This page contains fertilizer suggestions based on your crop prediction.</p>
+
+        <a href="/result_page" class="fertilizer-button">Back to Result</a> 
+    </div>
+</body>
+</html>
+
+recommendation_page:
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>FARM-EASYY</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="css/responsive.css">
+    <!-- fevicon -->
+    <link rel="icon" href="images/fevicon.png" type="image/gif" />
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="css/bootstrap-datepicker.min.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+</head>
+<!-- body -->
+<body class="main-layout">
+    <!-- loader  -->
+    <div class="loader_bg">
+        <div class="loader"><img src="images/loading.gif" alt="#"/></div>
+    </div>
+    <!-- end loader -->
+    <div class="full_bg">
+        <!-- header -->
+        <header class="header-area">
+            <div class="container-fluid">
+                <div class="row d_flex">
+                    <div class=" col-md-2 col-sm-3">
+                        <div class="logo">
+                            <a href="index.html">FARM<span>EASYY</span></a>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-sm-9">
+                        <div class="navbar-area">
+                            <nav class="site-navbar">
+                                <ul>
+                                    <li><a class="active" href="index.html">Home</a></li>
+                                    <li><a href="about.html">About</a></li>
+                                    <li><a href="service.html">Service</a></li>
+                                    <li><a href="blog.html">Blog</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+                                <button class="nav-toggler">
+                                <span></span>
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="col-md-2 padd_0 d_none">
+                        <ul class="email text_align_right">
+                            <li><a href="Javascript:void(0)">Login</a>
+                            </li>
+                            <li><a href="Javascript:void(0)"><i class="fa fa-search" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        
+
+        <div class="slider_main">
+            <div class="translucent-box">
+                <div class="container">
+                    <div class="heading-box">
+                        <h1 class="heading-text">Smart Crop Advisor Using Various Machine Learning</h1>
+                    </div>
+                    <hr> <!-- Add a horizontal line -->
+                    <form action="/predict" method="POST">
+                        <!-- Form inputs here -->
+                        <div>
+                            <label for="param1">Nitrogen:</label>
+                            <input type="number" name="param1" required>
+                        </div>
+
+                        <div>
+                            <label for="param2">Phosphorous:</label>
+                            <input type="number" name="param2" required>
+                        </div>
+
+                        <div>
+                            <label for="param3">Potassium:</label>
+                            <input type="number" name="param3" required>
+                        </div>
+
+                        <div>
+                            <label for="param4">Temperature:</label>
+                            <input type="number" name="param4" required>
+                        </div>
+
+                        <div>
+                            <label for="param5">Humidity:</label>
+                            <input type="number" name="param5" required>
+                        </div>
+
+                        <div>
+                            <label for="param6">pH:</label>
+                            <input type="number" name="param6" required>
+                        </div>
+
+                        <div>
+                            <label for="param7">Rainfall:</label>
+                            <input type="number" name="param7" required>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <!-- carousel code -->
+            <div id="banner1" class="carousel slide carousel-fade" data-ride="carousel" data-interval="6000">
+                <ol class="carousel-indicators">
+                    <li data-target="#banner1" data-slide-to="0" class="active"></li>
+                    <li data-target="#banner1" data-slide-to="1"></li>
+                    <li data-target="#banner1" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner" role="listbox">
+                    <div class="carousel-item active">
+                        <picture>
+                            <source srcset="images/banner.jpg" >
+                            <img srcset="images/banner.jpg" alt="responsive image" class="d-block img-fluid">
+                        </picture>
+                        <div class="carousel-caption relative"></div>
+                    </div>
+                    <!-- /.carousel-item -->
+                    <div class="carousel-item">
+                        <picture>
+                            <img srcset="images/banner.jpg" alt="responsive image" class="d-block img-fluid">
+                        </picture>
+                        <div class="carousel-caption relative"></div>
+                    </div>
+                    <!-- /.carousel-item -->
+                    <div class="carousel-item">
+                        <picture>
+                            <source srcset="images/banner.jpg" >
+                            <source srcset="images/banner.jpg" >
+                            <source srcset="images/banner.jpg" >
+                            <img srcset="images/banner.jpg" alt="responsive image" class="d-block img-fluid">
+                        </picture>
+                        <div class="carousel-caption relative"></div>
+                    </div>
+                    <!-- /.carousel-item -->
+                </div>
+                <!-- /.carousel-inner -->
+                <!-- Carousel items -->
+            </div>
+        </div>
+        
+    <!--  footer -->
+    <footer>
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="hedingh3  text_align_left">
+                            <h3>Newsletter</h3>
+                            <form id="colof" class="form_subscri">
+                                <input class="newsl" placeholder="Enter Email" type="text" name="Email">
+                                <button class="subsci_btn"><img src="images/new.png" alt="#"/></button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="hedingh3 text_align_left">
+                            <h3> Explore</h3>
+                            <ul class="menu_footer">
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="about.html">About</a></li>
+                                <li><a href="service.html">Service</a></li>
+                                <li><a href="blog.html">Blog</a></li>
+                                <li><a href="contact.html">Contact us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="hedingh3 text_align_left">
+                            <h3>Recent Posts</h3>
+                            <ul class="recent">
+                                <li><img src="images/news1_2.jpg" alt="#"/>How does this summer can affect crops? </li>
+                                <li><img src="images/news2.jpg" alt="#"/>Prices of fertilizers to be increased </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="hedingh3  flot_right text_align_left">
+                            <h3>ContacT</h3>
+                            <ul class="top_infomation">
+                                <li><i class="fa fa-phone" aria-hidden="true"></i>
+                                    40-23261407
+                                </li>
+                                <li><i class="fa fa-envelope" aria-hidden="true"></i>
+                                    <a href="Javascript:void(0)">farmeasyycust@gmail.com</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <div class="container">
+                    <div class="row d_flex">
+                        <div class="col-md-8">
+                            <p>© 2024 All Rights Reserved. Design by FARM-EASYY <a href="https://FARMEASYY.com/"> </a></p>
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="social_icon ">
+                                <li><a href="Javascript:void(0)"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                <li><a href="Javascript:void(0)"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                <li><a href="Javascript:void(0)"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end footer -->
+    <!-- Javascript files-->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.0.0.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/bootstrap-datepicker.min.js"></script>
+    <script src="js/custom.js"></script>
+</body>
+</html>
+
+result_page:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <title>FARM-EASYY</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Responsive-->
+    <link rel="stylesheet" href="css/responsive.css">
+    <!-- fevicon -->
+    <link rel="icon" href="images/fevicon.png" type="image/gif" />
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="css/bootstrap-datepicker.min.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+</head>
+<!-- body -->
+<body class="main-layout">
+    <!-- loader  -->
+    <div class="loader_bg">
+        <div class="loader"><img src="images/loading.gif" alt="#"/></div>
+    </div>
+    <!-- end loader -->
+    <div class="full_bg">
+        <!-- header -->
+        <header class="header-area">
+            <div class="container-fluid">
+                <div class="row d_flex">
+                    <div class=" col-md-2 col-sm-3">
+                        <div class="logo">
+                            <a href="index.html">FARM<span>EASYY</span></a>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-sm-9">
+                        <div class="navbar-area">
+                            <nav class="site-navbar">
+                                <ul>
+                                    <li><a class="active" href="index.html">Home</a></li>
+                                    <li><a href="about.html">About</a></li>
+                                    <li><a href="service.html">Service</a></li>
+                                    <li><a href="blog.html">Blog</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+                                <button class="nav-toggler">
+                                <span></span>
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="col-md-2 padd_0 d_none">
+                        <ul class="email text_align_right">
+                            <li><a href="Javascript:void(0)">Login</a>
+                            </li>
+                            <li><a href="Javascript:void(0)"><i class="fa fa-search" aria-hidden="true"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- end header inner -->
+        <div class="slider_main">
+            <div class="translucent-box">
+                <div class="result-container">
+                    <div class="heading-box">
+                        
+                            <h1 class="heading-text">Prediction Result</h1>
+                        
+                    </div>
+                    <div class="prediction">
+                        <p>Best crop to grow is : <span id="Prediction Result">{{ prediction }}</span></p>
+                    </div>
+                    <div class="description-box">
+                        <h2 class="heading-text2">Description:</h2>
+                        <p class="description">{{ crop_description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- top -->
+        
+        <div class="slider_main">
+            <!-- carousel code -->
+             <div id="banner1" class="carousel slide carousel-fade" data-ride="carousel" data-interval="6000">
+                <ol class="carousel-indicators">
+                    <li data-target="#banner1" data-slide-to="0" class="active"></li>
+                    <li data-target="#banner1" data-slide-to="1"></li>
+                    <li data-target="#banner1" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner" role="listbox">
+                    <div class="carousel-item active">
+                        <picture>
+                            <source srcset="images/banner.jpg" >
+                            <img srcset="images/banner.jpg" alt="responsive image" class="d-block img-fluid">
+                        </picture>
+                        <div class="carousel-caption relative"></div>
+                    </div>
+                    <!-- /.carousel-item -->
+                    <div class="carousel-item">
+                        <picture>
+                            <img srcset="images/banner.jpg" alt="responsive image" class="d-block img-fluid">
+                        </picture>
+                        <div class="carousel-caption relative"></div>
+                    </div>
+                    <!-- /.carousel-item -->
+                    <div class="carousel-item">
+                        <picture>
+                            <source srcset="images/banner.jpg" >
+                            <source srcset="images/banner.jpg" >
+                            <source srcset="images/banner.jpg" >
+                            <img srcset="images/banner.jpg" alt="responsive image" class="d-block img-fluid">
+                        </picture>
+                        <div class="carousel-caption relative"></div>
+                    </div>
+                    <!-- /.carousel-item -->
+                </div>
+                <!-- /.carousel-inner -->
+                
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end banner -->
+    
+    <!--  footer -->
+    <footer>
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="hedingh3  text_align_left">
+                            <h3>Newsletter</h3>
+                            <form id="colof" class="form_subscri">
+                                <input class="newsl" placeholder="Enter Email" type="text" name="Email">
+                                <button class="subsci_btn"><img src="images/new.png" alt="#"/></button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="hedingh3 text_align_left">
+                            <h3> Explore</h3>
+                            <ul class="menu_footer">
+                                <li><a href="index.html">Home</a></li>
+                                <li><a href="about.html">About</a></li>
+                                <li><a href="service.html">Service</a></li>
+                                <li><a href="blog.html">Blog</a></li>
+                                <li><a href="contact.html">Contact us</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="hedingh3 text_align_left">
+                            <h3>Recent Posts</h3>
+                            <ul class="recent">
+                                <li><img src="images/news1_2.jpg" alt="#"/>How does this summer can affect crops? </li>
+                                <li><img src="images/news2.jpg" alt="#"/>Prices of fertilizers to be increased </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="hedingh3  flot_right text_align_left">
+                            <h3>ContacT</h3>
+                            <ul class="top_infomation">
+                                <li><i class="fa fa-phone" aria-hidden="true"></i>
+                                    40-23261407
+                                </li>
+                                <li><i class="fa fa-envelope" aria-hidden="true"></i>
+                                    <a href="Javascript:void(0)">farmeasyycust@gmail.com</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <div class="container">
+                    <div class="row d_flex">
+                        <div class="col-md-8">
+                            <p>© 2024 All Rights Reserved. Design by FARM-EASYY <a href="https://FARMEASYY.com/"> </a></p>
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="social_icon ">
+                                <li><a href="Javascript:void(0)"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                                <li><a href="Javascript:void(0)"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                                <li><a href="Javascript:void(0)"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- end footer -->
+    <!-- Javascript files-->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.0.0.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/bootstrap-datepicker.min.js"></script>
+    <script src="js/custom.js"></script>
+</body>
+</html>
+
+index:
+
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <!-- basic -->
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <!-- mobile metas -->
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+      <!-- site metas -->
+      <title>FARM-EASYY</title>
+      <meta name="keywords" content="">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <!-- bootstrap css -->
+      <link rel="stylesheet" href="css/bootstrap.min.css">
+      <!-- style css -->
+      <link rel="stylesheet" href="css/style.css">
+      <!-- Responsive-->
+      <link rel="stylesheet" href="css/responsive.css">
+      <!-- fevicon -->
+      <link rel="icon" href="images/fevicon.png" type="image/gif" />
+      <!-- Tweaks for older IEs-->
+      <link rel="stylesheet" href="css/owl.carousel.min.css">
+      <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+      <link rel="stylesheet" href="css/bootstrap-datepicker.min.css">
+      <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+   </head>
+   <!-- body -->
+   <body class="main-layout">
+      <!-- loader  -->
+      <div class="loader_bg">
+         <div class="loader"><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\loading.gif" alt="#"/></div>
+      </div>
+      <!-- end loader -->
+      <div class="full_bg">
+         <!-- header -->
+         <header class="header-area">
+            <div class="container-fluid">
+               <div class="row d_flex">
+                  <div class=" col-md-2 col-sm-3">
+                     <div class="logo">
+                        <a href="index.html">FARM<span>EASYY</span></a>
+                     </div>
+                  </div>
+                  <div class="col-md-8 col-sm-9">
+                     <div class="navbar-area">
+                        <nav class="site-navbar">
+                           <ul>
+                              <li><a class="active" href="index.html">Home</a></li>
+                              <li><a href="about.html">About</a></li>
+                              <li><a href="service.html">Service</a></li>
+                              <!-- <li><a href="Javascript:void(0)">Projects</a></li> -->
+                              <!--  <li><a href="testimonail.html">Testimonail</a></li> -->
+                              <li><a href="blog.html">Blog</a></li>
+                              <li><a href="contact.html">Contact</a></li>
+                           </ul>
+                           <button class="nav-toggler">
+                           <span></span>
+                           </button>
+                        </nav>
+                     </div>
+                  </div>
+                  <div class="col-md-2 padd_0 d_none">
+                     <ul class="email text_align_right">
+                        <li><a href="Javascript:void(0)">Login</a>
+                        </li>
+                        <li><a href="Javascript:void(0)"><i class="fa fa-search" aria-hidden="true"></i>
+                           </a>
+                        </li>
+                     </ul>
+                  </div>
+               </div>
+            </div>
+         </header>
+         <!-- end header inner -->
+         <!-- top -->
+         <div class="slider_main">
+            <!-- carousel code -->
+             <div id="banner1" class="carousel slide carousel-fade" data-ride="carousel" data-interval="6000">
+                              <ol class="carousel-indicators">
+                                 <li data-target="#banner1" data-slide-to="0" class="active"></li>
+                                 <li data-target="#banner1" data-slide-to="1"></li>
+                                 <li data-target="#banner1" data-slide-to="2"></li>
+                              </ol>
+                              <div class="carousel-inner" role="listbox">
+                                 <div class="carousel-item active">
+                                    <picture>
+                                       <source srcset="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\banner.jpg" >
+                                     
+                                       <img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\banner.jpg" alt="#" class="d-block img-fluid">
+                                    </picture>
+                                    <div class="carousel-caption relative">
+                                       
+                                    </div>
+                                 </div>
+                                 <!-- /.carousel-item -->
+                                 <div class="carousel-item">
+                                    <picture>
+                                     
+                                       <img srcset="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\banner.jpg" alt="#" class="d-block img-fluid">
+                                    </picture>
+                                    <div class="carousel-caption relative">
+                                       
+                                    </div>
+                                 </div>
+                                 <!-- /.carousel-item -->
+                                 <div class="carousel-item">
+                                    <picture>
+                                       <source srcset="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\banner.jpg" >
+                                       <source srcset="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\banner.jpg" >
+                                       <source srcset="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\banner.jpg" >
+                                       <img srcset="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\banner.jpg" alt="#" class="d-block img-fluid">
+                                    </picture>
+                                    <div class="carousel-caption relative">
+                                       
+                                    </div>
+                                 </div>
+                                 <!-- /.carousel-item -->
+                              </div>
+                              <!-- /.carousel-inner -->
+                              <a class="carousel-control-prev" href="#banner1" role="button" data-slide="prev">
+                              <i class="fa fa-angle-left" aria-hidden="true"></i>
+                              <span class="sr-only">Previous</span>
+                              </a>
+                              <a class="carousel-control-next" href="#banner1" role="button" data-slide="next">
+                              <i class="fa fa-angle-right" aria-hidden="true"></i>
+                              <span class="sr-only">Next</span>
+                              </a>
+                           </div>
+                           <div class="container-fluid">
+                              <div class="row">
+                                 <div class="col-md-12">
+                                    <div class="willom">
+                                      <h1> Let's Farm Together</h1>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+         </div>
+      </div>
+      <!-- end banner -->
+      <!-- about -->
+      <div class="about">
+         <div class="container-fluid">
+            <div class="row d_flex">
+               <div class="col-lg-6 col-md-12">
+                  <div class="titlepage text_align_left">
+                     <span>About Us</span>
+                     <h2>MAKE FARMING EASY</h2>
+                     <p>Our motto, 'Make Farming Easy,' isn't just words, it's our promise. We're dedicated to simplifying farming by providing easy-to-use tools, cutting-edge tech, and expert advice. Our goal is to help farmers work smarter, boost productivity, and revolutionize agriculture."</p>
+                     <a class="read_more" href="about.html">Learn More</a>
+                  </div>
+               </div>
+               <div class="col-lg-6 col-md-12">
+                  <div class="row d_flex">
+                   <div class="col-md-7">
+                     <div class="about_img">
+                        <figure><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\about_img.jpg" alt="#"/>
+                        </figure>
+                     </div>
+                   </div>
+                   <div class="col-md-5">
+                     <div class="about_img">
+                        <figure><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\about_img1.jpg" alt="#"/>
+                        </figure>
+                     </div>
+                   </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- end about -->
+      <!-- services -->
+      <div class="services">
+         <div class="container">
+            <div class="row">
+               <div class="col-md-12">
+                  <div class="titlepage text_align_left">
+                     <span>What We Do</span>
+                         <h2>SERVICES & PRODUCTS WE OFFER</h2>
+                  </div>
+               </div>
+            </div>
+            <!--crop recommendation system-->
+            <div class="row">
+               <div class="col-md-4">
+                  <div class="services_box_main">
+                     <div  class="services_box text_align_left">
+                          <figure><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\img2.jpg" alt="#"/></figure>
+                        <div class="veget">
+                           <h3>CROP<br>RECOMMENDATION</h3>
+                           <p>Crop recommendation is like having a knowledgeable friend for farmers. It suggests which crops are best suited for their land and conditions, helping them make informed decisions and maximize their yield.</p>
+                        </div>
+                     </div>
+                     <a class="read_more" href="recommendation_page.html">Launch</a>
+                  </div>
+               </div>
+               <!--disease prediciton system-->
+               <div class="col-md-4">
+               <div class="services_box_main">
+                     <div  class="services_box text_align_left">
+                          <figure><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\img1.jpg" alt="#"/></figure>
+                        <div class="veget">
+                           <h3>DISEASE<br>PREDICTION</h3>
+                           <p>Crop disease prediction is about using data and technology to foresee which diseases might affect crops. By analyzing factors like weather patterns and plant health, we aim to warn farmers in advance, helping them take preventive measures and protect their crops.</p>
+                        </div>
+                     </div>
+                     <a class="read_more" href="service.html">Launch</a>
+                  </div>
+               </div>
+               <!--fertilizer availability-->
+               <div class="col-md-4">
+               <div class="services_box_main">
+                     <div  class="services_box text_align_left">
+                          <figure><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\img3.jpg" alt="#"/></figure>
+                        <div class="veget">
+                           <h3>FERTILIZER<br>AVAILABILITY</h3>
+                           <p>Fertilizer availability means making sure farmers can easily get the fertilizers they need to help their crops grow strong and healthy.</p>
+                        </div>
+                     </div>
+                     <a class="read_more" href="service.html">Launch</a>
+                  </div>
+               </div>
+
+            </div>
+         </div>
+      </div>
+      <!-- end services -->
+   
+      <!-- choose -->
+      <!--<div class="choose">
+         <div class="container">
+            <div class="row">
+               <div class="col-md-12">
+                  <div class="titlepage text_align_center">
+                     <h2>Why choose us</h2>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col-md-3">
+                  <div class="point text_align_center">
+                     <h3>300+</h3>
+                     <span>Regula <br>Customers</span>
+                  </div>
+               </div>
+               <div class="col-md-3">
+                  <div class="point text_align_center">
+                     <h3>30+</h3>
+                     <span>Professional <br>Engineering</span>
+                  </div>
+               </div>
+               <div class="col-md-3">
+                  <div class="point text_align_center">
+                     <h3>300+</h3>
+                     <span>Points of Sale  <br>Goods</span>
+                  </div>
+               </div>
+               <div class="col-md-3">
+                  <div class="point text_align_center">
+                     <h3>30+</h3>
+                     <span>Awards <br>Won</span>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      choose -->
+   
+      <!-- news -->
+      <div class="news">
+         <div class="container">
+            <div class="row">
+               <div class="col-md-12">
+                  <div class="titlepage text_align_left">
+                     <span>THE</span>
+                     <h2>Latest News</h2>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class=" col-md-4">
+                  <div class="latest">
+                     <figure><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\news1_1.jpg" alt="#"/></figure>
+                     <span>15<br>  March</span>
+                     <div class="nostrud">
+                        <h3>There can be a huge storm before the month of April  </h3>
+                        <p>A significant storm may occur prior to the arrival of April, potentially bringing heavy rainfall, strong winds, and other adverse weather conditions. It's essential to stay prepared and keep an eye on weather forecasts to mitigate any potential risks or damages.</p>
+                        <a class="read_more" href="blog.html">Read More</a>
+                     </div>
+                  </div>
+               </div>
+               <div class=" col-md-4">
+                  <div class="latest box_desho">
+                     <figure><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\news2.jpg" alt="#"/></figure>
+                     <span>29<br> March</span>
+                     <div class="nostrud">
+                        <h3>Prices of fertilizers to be increased </h3>
+                        <p>The increasing prices of fertilizers are putting financial pressure on farmers, as they now have to allocate more of their budget to purchase these essential inputs for their crops. This rise in costs can impact their overall profitability and may require them to adjust their budgets and strategies to maintain productivity while managing expenses. </p>
+                        <a class="read_more" href="blog.html">Read More</a>
+                     </div>
+                  </div>
+               </div>
+              <div class=" col-md-4">
+                  <div class="latest">
+                     <figure><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\news1_2.jpg" alt="#"/></figure>
+                     <span>12<br> April</span>
+                     <div class="nostrud">
+                        <h3>How does this summer can affect crops?</h3>
+                        <p>In summer, crops feel the heat! The warm weather can help them grow faster, but too much heat and not enough water can harm them. Farmers need to take care of their crops by watering them enough and protecting them from extreme heat. </p>
+                        <a class="read_more" href="blog.html">Read More</a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- end news -->
+      <!-- contact -->
+      <div class="contact">
+         <div class="container">
+            <div class="row">
+               <div class="col-md-12 ">
+                  <div class="titlepage text_align_center">
+                     <span>Our Contact</span>
+                     <h2>REQUEST A CALL BACK</h2>
+                  </div>
+               </div>
+               <div class="col-md-8 offset-md-2">
+                  <form id="request" class="main_form">
+                     <div class="row">
+                        <div class="col-md-12 ">
+                           <input class="form_control" placeholder="Your Name" type="type" name=" Name"> 
+                        </div>
+                        <div class="col-md-12">
+                           <input class="form_control" placeholder="Phone Number" type="type" name="Phone Number">                          
+                        </div>
+                       
+                        <div class="col-md-12">
+                           <input class="textarea" placeholder="Message" type="type" name="message"> 
+                        </div>
+                        <div class="col-md-12">
+                           <div class="group_btn">
+                           <button class="send_btn">Send</button>
+                            <button class="send_btn">location</button>
+                         </div>
+                        </div>
+                     </div>
+                  </form>
+               </div>
+            </div>
+         </div>
+          <div class="map-responsive">
+            <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA0s1a7phLN0iaD6-UE7m4qP-z21pH0eSc&amp;q=Eiffel+Tower+Paris+France" width="600" height="430" frameborder="0" style="border:0; width: 100%;" allowfullscreen=""></iframe>
+         </div>
+      </div>
+      <!-- end contact -->
+      <!--  footer -->
+      <footer>
+         <div class="footer">
+            <div class="container">
+               <div class="row">
+                         <div class="col-lg-3 col-md-6">
+                           <div class="hedingh3  text_align_left">
+                              <h3>Newsletter</h3>
+                              <form id="colof" class="form_subscri">
+                                 <input class="newsl" placeholder="Enter Email" type="text" name="Email">
+                                 <button class="subsci_btn"><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\new.png" alt="#"/></button>
+                              </form>
+                              
+                           </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                           <div class="hedingh3 text_align_left">
+                              <h3> Explore</h3>
+                              <ul class="menu_footer">
+                                 <li><a href="index.html">Home</a></li>
+                                 <li><a href="about.html">About</a></li>
+                                 <li><a href="service.html">Service</a></li>
+                                 <li><a href="blog.html">Blog</a></li>
+                                 <!--<li><a href="Javascript:void(0)">Projects</a></li>
+                                 <li><a href="testimonail.html">Testimonail</a></li>-->
+                                 <li><a href="contact.html">Contact us</a></li>
+                              </ul>
+                           </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                           <div class="hedingh3 text_align_left">
+                              <h3>Recent Posts</h3>
+                              <ul class="recent">
+                                 <li><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\news1_2.jpg" alt="#"/>How does this summer can affect crops? </li>
+                                 <li><img src="C:\Users\satvik Varma\Downloads\farmeasyy_new\images\news2.jpg" alt="#"/>Prices of fertilizers to be increased </li>
+                              </ul>
+                           </div>
+                        </div>
+                         <div class="col-lg-3 col-md-6">
+                           <div class="hedingh3  flot_right text_align_left">
+                              <h3>ContacT</h3>
+                              <ul class="top_infomation">
+                                 <li><i class="fa fa-phone" aria-hidden="true"></i>
+                                    40-23261407
+                                 </li>
+                                 <li><i class="fa fa-envelope" aria-hidden="true"></i>
+                                    <a href="Javascript:void(0)">farmeasyycust@gmail.com</a>
+                                 </li>
+                              </ul>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+             
+            <div class="copyright">
+               <div class="container">
+                  <div class="row d_flex">
+                     <div class="col-md-8">
+                        <p>© 2024 All Rights Reserved. Design by FARM-EASYY <a href="https://FARMEASYY.com/"> </a></p>
+                     </div>
+                     <div class="col-md-4">
+                           <ul class="social_icon ">
+                              <li><a href="Javascript:void(0)"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                              <li><a href="Javascript:void(0)"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                              <li><a href="Javascript:void(0)"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+                           </ul>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </footer>
+      <!-- end footer -->
+      <!-- Javascript files-->
+      <script src="js/jquery.min.js"></script>
+      <script src="js/bootstrap.bundle.min.js"></script>
+      <script src="js/jquery-3.0.0.min.js"></script>
+      <script src="js/owl.carousel.min.js"></script>
+      <script src="js/bootstrap-datepicker.min.js"></script>
+      <script src="js/custom.js"></script>
+   </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+"rice": "rice, (Oryza sativa), edible starchy cereal grain and the grass plant (family Poaceae) by which it is produced. Roughly one-half of the world population, including virtually all of East and Southeast Asia, is wholly dependent upon rice as a staple food, 95 percent of the world's rice crop is eaten by humans.",
+        "maize": "Maize, also known as corn, is a cereal grain that has been cultivated by humans for thousands of years. It's one of the most widely grown and consumed crops globally, with a diverse range of uses in food, animal feed, and industrial applications.",
+        "chickpea": "Chickpea is the common name for an annual plant, Cicer arietinum, of the Fabaceae (or Leguminosae) family that is widely cultivated for its typically yellow-brown, pea like seeds. The name also is used for these edible seeds, which form in short pods and are popular in various cuisines.",
+        "kidneybeans": "Kidney beans are small, reddish-brown beans that are eaten as a vegetable. They are the seeds of a bean plant. Kidney beans are long, very narrow beans that are green in colour and are eaten as a vegetable. They grow on a tall climbing plant and are the cases that contain the seeds of the plant.",
+        "pigeonpeas": "Pigeon pea is an erect, short-lived perennial leguminous shrub that usually grows to a height of about 1-2 m, but can reach up to 2-5 m high. It quickly develops a deep (2 m depth) poisonous taproot. The stems are woody at the base, angular and branching. The leaves are alternate and trifoliate.",
+        "mothbeans": "Moth bean is a creeping annual herbaceous plant which grows to approximately 40 cm high. Yellow flowers on its hairy and densely packed branches develop into yellow-brown pods, 2 to 3 inches in length The seeds of these pods contain approximately 22 to 24% protein.",
+        "mungbean": "The mung bean is a fast-growing erect or semi-erect annual plant with a sturdy taproot. Like many other members of the pea family, mung bean plants add nitrogen to the soil by means of nitrogen-fixing bacteria housed in nodules on their roots.",
+        "blackgram": "Black gram (Vigna mungo (L.) Hepper) is an erect, fast-growing annual, herbaceous legume reaching 30-100 cm in height. It has a well-developed taproot and its stems are diffusely branched from the base. Occasionally it has a twining habit and it is generally pubescent.",
+        "lentil": "lentil, (Lens culinaris), small annual legume of the pea family (Fabaceae) and its edible seed. Lentils are widely cultivated throughout Europe, Asia, and North Africa but are little grown in the Western Hemisphere. The seeds are used chiefly in soups and stews, and the herbage is used as fodder in some places.",
+        "pomegranate": "The pomegranate plant is a large shrub or small tree that has smooth, evergreen leaves and showy orange to red flowers. It has rounded fruit with a dry outer covering (husk) made up of two layers: (1) a hard-outer layer called an epicarp, (2) a soft inner layer called a mesocarp.",
+        "banana": "Bananas are long, curved fruits with smooth, yellow, and sometimes slightly green skin. The average length of a banana is about 7 to 9 inches, and it is about 2 to 3 inches in diameter. The skin of the banana is usually yellow when it is ripe, but it can also be green, red, or purple depending on the variety.",
+        "mango": "Mango is the national fruit of India which is loved by one and all. It is a very juicy, pulpy and luscious fruit. Ripe mangoes can either be consumed raw or in the form of salad, juice, jams, milkshake or pickles. Mango is a rich source of various vitamins and minerals.",
+        "grapes": "A grape is a fruit, botanically a berry, of genus Vitis and family Vitaceae. Grapes grow in clusters of 15 to 300 in different colors (crimson, black, dark blue, yellow, green, orange, pink, and white) and are specifically a nonclimacteric type and deciduous crop.",
+        "watermelon": "Watermelon is grown in favorable climates from tropical to temperate regions worldwide for its large edible fruit, which is a berry with a hard rind and no internal divisions, and is botanically called a pepo. The sweet, juicy flesh is usually deep red to pink, with many black seeds, although seedless varieties exist.",
+        "muskmelon": "muskmelon, any of several varieties of netted-rind melons in the gourd family (Cucurbitaceae), noted for their musky-scented sweet juicy orange flesh. Muskmelons are among the most-important commercial melons and are commonly eaten fresh.",
+        "apple": "The apple is one of the pome (fleshy) fruits. Apples at harvest vary widely in size, shape, colour, and acidity, but most are fairly round and some shade of red or yellow. The thousands of varieties fall into three broad classes: cider, cooking, and dessert varieties.",
+        "orange": "Oranges are citrus fruits with fragrant, leathery skin and juicy flesh. The most common types are the sweet (or common) orange, the sour (or Seville) orange, and the mandarin orange. The sweet orange is the most widely grown citrus fruit in the world.",
+        "papaya": "The papaya fruit is slightly sweet, with an agreeable musky tang, which is more pronounced in some varieties and in some climates than in others. It is a popular breakfast fruit in many countries and is also used in salads, pies, sherbets, juices, and confections. The unripe fruit can be cooked like squash.",
+        "coconut": "Coconut is the fruit of a tropical palm plant. It has a hard shell, edible white flesh and clear liquid, sometimes referred to as water, which is often used as a beverage. Coconut flesh or “meat” is aromatic, chewy in texture and rich in taste.",
+        "cotton": "Cotton fibers are natural hollow fibers; they are soft, cool, known as breathable fibers and absorbent. Cotton fibers can hold water 24 to 27 times their own weight. They are strong, dye absorbent and can stand up against abrasion wear and high temperature.",
+        "jute": "Jute fabric is a type of natural fabric made from the fibers of the jute plant. The jute plant consists of long, soft, lustrous plant fibers that can be spun into thick, strong yarns. These fibers are often used to make burlap, a coarse, inexpensive material used for bags, sacks and other industrial purposes.",
+        "coffee": "Coffee is a beverage prepared from roasted coffee beans. It's also a plant (Coffea) and the name of the drink that is made from this plant. The coffee plant is a bush or tree that can grow up to ten meters (about 32 feet) high, but is usually cut shorter. Coffee plants originally grew in Ethiopia, and now also grow in South America, Central America and Southeast Asia.",
+         # Add more descriptions for other crops as needed
